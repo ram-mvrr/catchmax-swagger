@@ -1,4 +1,4 @@
-package com.xadmin.swagger;
+package com.crud.swagger;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
