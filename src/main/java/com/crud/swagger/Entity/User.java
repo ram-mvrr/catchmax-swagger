@@ -1,13 +1,15 @@
 package com.crud.swagger.Entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Data
 public class User {
 
 

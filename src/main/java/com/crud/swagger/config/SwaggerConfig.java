@@ -25,9 +25,12 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("Sample API")
-            .description("This is a sample API documentation")
-            .version("1.0")
-            .build();
+                .title("GlennMaxwell API")
+                .description("Glenn Maxwell API documentation for Users and Addresses")
+                .termsOfServiceUrl("")
+                .license("GlennMaxwell Rest API License")
+                .licenseUrl("")
+                .version("1.0")
+                .build();
     }
 }
