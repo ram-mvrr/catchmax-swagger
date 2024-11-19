@@ -8,9 +8,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User {
 
-    private static final long serialVersionUID = 1L; // Added serialVersionUID
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generated primary key
