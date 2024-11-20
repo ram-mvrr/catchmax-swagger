@@ -1,22 +1,16 @@
 package com.crud.swagger.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.crud.swagger.dto.UserDTO;
+import com.crud.swagger.exceptions.ResourceNotFoundException;
+import com.crud.swagger.exceptions.UserNotFoundException;
+import com.crud.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.crud.swagger.Entity.User;
-import com.crud.swagger.service.UserService;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,58 +19,64 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Create a new user.
+     *
+     * @param userDTO User data
+     * @return Created UserDTO
+     */
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        try {
-            User createdUser = userService.createUser(user);
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error creating user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        UserDTO createdUser = userService.createUser(userDTO);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    /**
+     * Get all users.
+     *
+     * @return List of UserDTOs
+     */
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        try {
-            List<User> users = userService.getAllUsers();
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error fetching users: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    /**
+     * Get a user by ID.
+     *
+     * @param id User ID
+     * @return UserDTO if found
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        try {
-            Optional<User> user = userService.getUserById(id);
-            if (user.isPresent()) {
-                return new ResponseEntity<>(user.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("User not found with ID: " + id, HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error fetching user by ID: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        Optional<UserDTO> user = userService.getUserById(id);
+        return user.map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Update a user by ID.
+     *
+     * @param id             User ID
+     * @param updatedUserDTO Updated User data
+     * @return Updated UserDTO
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        try {
-            User user = userService.updateUser(id, updatedUser);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error updating user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO updatedUserDTO) throws UserNotFoundException {
+        UserDTO updatedUser = userService.updateUser(id, updatedUserDTO);
+        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }
 
+    /**
+     * Delete a user by ID.
+     *
+     * @param id User ID
+     * @return Confirmation message
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error deleting user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException {
+        userService.deleteUser(id);
+        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 }
-

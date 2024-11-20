@@ -1,4 +1,4 @@
-package com.crud.swagger.Entity;
+package com.crud.swagger.entity;
 
 import lombok.Data;
 
