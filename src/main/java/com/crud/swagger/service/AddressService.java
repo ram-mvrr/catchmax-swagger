@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import com.crud.swagger.dto.AddressDTO;
+import com.crud.swagger.dto.CreateAddressDTO;
+import com.crud.swagger.dto.UpdateAddressDTO;
 import com.crud.swagger.exceptions.AddressNotFoundException;
+import com.crud.swagger.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.crud.swagger.entity.Address;
 
 @Service
 public interface AddressService {
 
 
-	public AddressDTO createAddress(AddressDTO addressDTO, Long userId);
+	public CreateAddressDTO createAddress(CreateAddressDTO addressDTO, Long userId) throws UserNotFoundException;
 	public List<AddressDTO> getAllAddresses();
 	public Optional<AddressDTO> getAddressById(Long id);
-	public AddressDTO updateAddress(Long id, AddressDTO updatedAddress) throws AddressNotFoundException;
+	public UpdateAddressDTO updateAddress(Long id, UpdateAddressDTO updatedAddress) throws AddressNotFoundException;
 	public void deleteAddress(Long id) throws AddressNotFoundException;
 }

@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.crud.swagger.Repo.UserRepository;
 import com.crud.swagger.dto.AddressDTO;
+import com.crud.swagger.dto.CreateAddressDTO;
+import com.crud.swagger.dto.UpdateAddressDTO;
+import com.crud.swagger.entity.User;
 import com.crud.swagger.exceptions.AddressNotFoundException;
+import com.crud.swagger.exceptions.UserNotFoundException;
 import com.crud.swagger.mapper.AddressMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.crud.swagger.entity.Address;
-import com.crud.swagger.entity.User;
 import com.crud.swagger.Repo.AddressRepository;
-import com.crud.swagger.Repo.UserRepository;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -24,11 +27,25 @@ public class AddressServiceImpl implements AddressService {
 	@Autowired
     AddressMapper addressMapper;
 
+	@Autowired
+	UserRepository userRepository;
+
 	@Override
-	public AddressDTO createAddress(AddressDTO addressDTO, Long userId) {
+	public CreateAddressDTO createAddress(CreateAddressDTO addressDTO, Long userId) throws UserNotFoundException {
+		// Fetch the User entity by userId
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+		// Map the CreateAddressDTO to an Address entity
 		Address createdAddress = addressMapper.toAddressEntity(addressDTO);
-        addressRepository.save(createdAddress);
-        return addressMapper.toAddressDTO(createdAddress);
+
+		// Associate the Address with the User
+		createdAddress.setUser(user);
+
+		// Save the Address entity
+		addressRepository.save(createdAddress);
+
+		// Convert the saved Address entity back to CreateAddressDTO
+		return addressMapper.toCreateAddressDTO(createdAddress);
 	}
 
 	@Override
@@ -44,19 +61,25 @@ public class AddressServiceImpl implements AddressService {
 	}
 
 	@Override
-	public AddressDTO updateAddress(Long id, AddressDTO updatedAddress) throws AddressNotFoundException {
-		Address existingAddress = addressRepository.findById(id).
-                orElseThrow(()->new AddressNotFoundException("address not found with ID:"+id));
-        // Map updatedAddress data into the existing entity
-        Address updatedAddressEntity = addressMapper.toAddressEntity(updatedAddress);
+	public UpdateAddressDTO updateAddress(Long id, UpdateAddressDTO updatedAddress) throws AddressNotFoundException {
+		// Fetch the existing Address by ID
+		Address existingAddress = addressRepository.findById(id)
+				.orElseThrow(() -> new AddressNotFoundException("Address not found with ID: " + id));
 
-        // Ensure the ID remains the same
-        updatedAddressEntity.setAddressId(updatedAddress.getAddressId());
+		// Map updatedAddress data into the existing Address entity
+		Address updatedAddressEntity = addressMapper.toAddressEntity(updatedAddress);
 
-        Address savedAddress = addressRepository.save(updatedAddressEntity);
+		// Retain the existing ID (since it's an update)
+		updatedAddressEntity.setAddressId(existingAddress.getAddressId());
 
-        // Convert the saved entity back to DTO
-        return addressMapper.toAddressDTO(savedAddress);
+		// Ensure the Address remains associated with the same User (you can skip this if userId is not being changed)
+		updatedAddressEntity.setUser(existingAddress.getUser());
+
+		// Save the updated Address entity
+		Address savedAddress = addressRepository.save(updatedAddressEntity);
+
+		// Convert the saved Address entity back to UpdateAddressDTO
+		return addressMapper.toUpdateAddressDTO(savedAddress);
 
 	}
 

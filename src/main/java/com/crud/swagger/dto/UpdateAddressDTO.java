@@ -3,7 +3,7 @@ package com.crud.swagger.dto;
 import lombok.Data;
 
 @Data
-public class AddressDTO {
+public class UpdateAddressDTO {
 
     private Long addressId;
     private String firstName;

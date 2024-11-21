@@ -1,16 +1,23 @@
 package com.crud.swagger.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 @Data
-public class UserDTO {
-    private Long userId;
+public class UpdateUserDTO {
+    @NotNull
+    private Long userId; // Required for identifying the user
+
     private String firstName;
     private String lastName;
     private String fullName;
+
+    @Email
     private String email;
+
     private String username;
     private String profilePictureUrl;
     private String phoneNumber;
@@ -19,11 +26,4 @@ public class UserDTO {
     private String gender;
     private LocalDateTime dateOfBirth;
     private String location;
-    private LocalDateTime lastActivity;
-    private Integer loginCount;
-    private LocalDateTime userSince;
-    private Integer userPoint;
-    private List<AddressDTO> addresses; // Include AddressDTO for one-to-many relationship
 }
-
-

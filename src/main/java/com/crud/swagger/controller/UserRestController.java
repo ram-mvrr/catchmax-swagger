@@ -1,8 +1,11 @@
 package com.crud.swagger.controller;
 
+import com.crud.swagger.dto.CreateUserDTO;
+import com.crud.swagger.dto.UpdateUserDTO;
 import com.crud.swagger.dto.UserDTO;
-import com.crud.swagger.exceptions.ResourceNotFoundException;
+import com.crud.swagger.exceptions.EmailAlreadyExistsException;
 import com.crud.swagger.exceptions.UserNotFoundException;
+import com.crud.swagger.exceptions.UsernameAlreadyExistsException;
 import com.crud.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +25,12 @@ public class UserRestController {
     /**
      * Create a new user.
      *
-     * @param userDTO User data
+     * @param createUserDTO User data
      * @return Created UserDTO
      */
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        UserDTO createdUser = userService.createUser(userDTO);
+    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserDTO createUserDTO) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
+        UserDTO createdUser = userService.createUser(createUserDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
@@ -63,7 +66,7 @@ public class UserRestController {
      * @return Updated UserDTO
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO updatedUserDTO) throws UserNotFoundException {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updatedUserDTO) throws UserNotFoundException {
         UserDTO updatedUser = userService.updateUser(id, updatedUserDTO);
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }

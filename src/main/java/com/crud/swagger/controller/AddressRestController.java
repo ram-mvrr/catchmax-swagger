@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.crud.swagger.dto.AddressDTO;
+import com.crud.swagger.dto.CreateAddressDTO;
+import com.crud.swagger.dto.UpdateAddressDTO;
 import com.crud.swagger.exceptions.AddressNotFoundException;
+import com.crud.swagger.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,16 +28,16 @@ public class AddressRestController {
 
     // Create Address
     @PostMapping("/{userId}")
-    public ResponseEntity<AddressDTO> createAddress(@RequestBody AddressDTO addressDTO, @PathVariable Long userId) {
-        AddressDTO createdAddress =  addressService.createAddress(addressDTO, userId);
+    public ResponseEntity<CreateAddressDTO> createAddress(@RequestBody CreateAddressDTO addressDTO, @PathVariable Long userId) throws UserNotFoundException {
+        CreateAddressDTO createdAddress =  addressService.createAddress(addressDTO, userId);
         return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
     }
 
     // Get all Addresses
     @GetMapping
     public ResponseEntity<List<AddressDTO>> getAllAddresses() {
-        List<AddressDTO> addressDTOs = addressService.getAllAddresses();
-        return new ResponseEntity<>(addressDTOs, HttpStatus.OK);
+        List<AddressDTO> addressDTOS = addressService.getAllAddresses();
+        return new ResponseEntity<>(addressDTOS, HttpStatus.OK);
     }
 
     // Get Address by ID
@@ -45,8 +48,8 @@ public class AddressRestController {
     }
     // Update Address by ID
     @PutMapping("/{id}")
-    public ResponseEntity<AddressDTO> updateAddress(@PathVariable Long id, @RequestBody AddressDTO updatedAddress) throws AddressNotFoundException {
-       AddressDTO addressDTO = addressService.updateAddress(id,updatedAddress);
+    public ResponseEntity<UpdateAddressDTO> updateAddress(@PathVariable Long id, @RequestBody UpdateAddressDTO updatedAddress) throws AddressNotFoundException {
+       UpdateAddressDTO addressDTO = addressService.updateAddress(id,updatedAddress);
        return new ResponseEntity<>(addressDTO, HttpStatus.OK);
     }
 

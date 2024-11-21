@@ -3,9 +3,8 @@ package com.crud.swagger.dto;
 import lombok.Data;
 
 @Data
-public class AddressDTO {
+public class CreateAddressDTO {
 
-    private Long addressId;
     private String firstName;
     private String lastName;
     private String company;
@@ -17,3 +16,4 @@ public class AddressDTO {
     private String postalCode;
     private Long userId;
 }
+
